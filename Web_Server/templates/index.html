@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>STM32 Sensor Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static',
+          filename='style.css') }}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     SIDEBAR
+===================================================== -->
+
+<div class="sidebar">
+
+    <div class="logo">
+
+        ⚙️
+
+        <h2>STM32 Sensor</h2>
+
+        <h2>Dashboard</h2>
+
+    </div>
+
+
+    <div class="menu active">
+        🏠 &nbsp; Overview
+    </div>
+
+    <div class="menu">
+        ◉ &nbsp; Sensors
+    </div>
+
+    <div class="menu">
+        📈 &nbsp; Charts
+    </div>
+
+    <div class="menu">
+        ⚙️ &nbsp; System Status
+    </div>
+
+    <div class="menu">
+        ⚠️ &nbsp; Alerts
+    </div>
+
+    <div class="menu">
+        ▣ &nbsp; Logs
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     MAIN CONTENT
+===================================================== -->
+
+<div class="main">
+
+
+    <!-- HEADER -->
+
+    <div class="header">
+
+        <h1>FLASK DASHBOARD (REAL-TIME MONITORING)</h1>
+
+    </div>
+
+
+    <!-- =================================================
+         SENSOR CARDS
+    ================================================== -->
+
+    <div class="cards">
+
+
+        <div class="card temperature">
+
+            <div class="icon">🌡️</div>
+
+            <div>
+
+                <p>Temperature</p>
+
+                <h2 id="temperature">
+                    -- °C
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="card pressure">
+
+            <div class="icon">🏔️</div>
+
+            <div>
+
+                <p>Pressure</p>
+
+                <h2 id="pressure">
+                    -- hPa
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="card light">
+
+            <div class="icon">☀️</div>
+
+            <div>
+
+                <p>Light</p>
+
+                <h2 id="lux">
+                    -- Lux
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="card heart">
+
+            <div class="icon">❤️</div>
+
+            <div>
+
+                <p>Heart Rate</p>
+
+                <h2 id="heart_rate">
+                    -- BPM
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="card spo2">
+
+            <div class="icon">💧</div>
+
+            <div>
+
+                <p>SpO2</p>
+
+                <h2 id="spo2">
+                    -- %
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="card cpu">
+
+            <div class="icon">⏱️</div>
+
+            <div>
+
+                <p>CPU Usage</p>
+
+                <h2 id="cpu_usage">
+                    -- %
+                </h2>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         TABLE + CHART
+    ================================================== -->
+
+    <div class="middle">
+
+
+        <!-- LIVE SENSOR TABLE -->
+
+        <div class="panel sensor-panel">
+
+            <div class="panel-title">
+
+                <h3>Live Sensor Data</h3>
+
+                <span id="updateTime">
+                    Time: --
+                </span>
+
+            </div>
+
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>Sensor</th>
+
+                        <th>Value</th>
+
+                        <th>Unit</th>
+
+                        <th>Status</th>
+
+                        <th>Last Update</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    <tr>
+
+                        <td>BH1750 (Light)</td>
+
+                        <td id="tableLux">--</td>
+
+                        <td>Lux</td>
+
+                        <td>
+                            <span class="normal">
+                                Normal
+                            </span>
+                        </td>
+
+                        <td id="timeLux">--</td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>BMP280 (Temp)</td>
+
+                        <td id="tableTemp">--</td>
+
+                        <td>°C</td>
+
+                        <td>
+                            <span id="tempStatus"
+                                  class="normal">
+                                Normal
+                            </span>
+                        </td>
+
+                        <td id="timeTemp">--</td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>BMP280 (Pressure)</td>
+
+                        <td id="tablePressure">--</td>
+
+                        <td>hPa</td>
+
+                        <td>
+                            <span class="normal">
+                                Normal
+                            </span>
+                        </td>
+
+                        <td id="timePressure">--</td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>MPU6050 (X)</td>
+
+                        <td id="tableAX">--</td>
+
+                        <td>mg</td>
+
+                        <td>
+                            <span class="normal">
+                                Normal
+                            </span>
+                        </td>
+
+                        <td id="timeMPU">--</td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>MPU6050 (Y)</td>
+
+                        <td id="tableAY">--</td>
+
+                        <td>mg</td>
+
+                        <td>
+                            <span class="normal">
+                                Normal
+                            </span>
+                        </td>
+
+                        <td>--</td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>MPU6050 (Z)</td>
+
+                        <td id="tableAZ">--</td>
+
+                        <td>mg</td>
+
+                        <td>
+                            <span class="normal">
+                                Normal
+                            </span>
+                        </td>
+
+                        <td>--</td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>MAX30102 (HR)</td>
+
+                        <td id="tableHR">--</td>
+
+                        <td>BPM</td>
+
+                        <td>
+                            <span class="normal">
+                                Normal
+                            </span>
+                        </td>
+
+                        <td id="timeHR">--</td>
+
+                    </tr>
+
+
+                    <tr>
+
+                        <td>MAX30102 (SpO2)</td>
+
+                        <td id="tableSpO2">--</td>
+
+                        <td>%</td>
+
+                        <td>
+                            <span class="normal">
+                                Normal
+                            </span>
+                        </td>
+
+                        <td>--</td>
+
+                    </tr>
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- LIVE CHART -->
+
+        <div class="panel chart-panel">
+
+            <div class="panel-title">
+
+                <h3>Live Charts</h3>
+
+                <select id="chartSelect">
+
+                    <option value="temperature">
+                        Temperature
+                    </option>
+
+                    <option value="pressure">
+                        Pressure
+                    </option>
+
+                    <option value="lux">
+                        Light
+                    </option>
+
+                    <option value="heart_rate">
+                        Heart Rate
+                    </option>
+
+                    <option value="spo2">
+                        SpO2
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <canvas id="sensorChart"></canvas>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         SYSTEM STATUS + ALERTS
+    ================================================== -->
+
+    <div class="bottom">
+
+
+        <div class="panel">
+
+            <h3>System Status</h3>
+
+
+            <div class="status-container">
+
+
+                <div class="status-item">
+
+                    <span id="systemDot"
+                          class="dot">
+                    </span>
+
+                    <b>Data Flow</b>
+
+                    <small id="systemStatus">
+                        Checking...
+                    </small>
+
+                </div>
+
+
+                <div class="status-item">
+
+                    <span class="dot green">
+                    </span>
+
+                    <b>Database</b>
+
+                    <small id="databaseStatus">
+                        Checking...
+                    </small>
+
+                </div>
+
+
+                <div class="status-item">
+
+                    <span id="mqttDot"
+                          class="dot">
+                    </span>
+
+                    <b>MQTT</b>
+
+                    <small id="mqttStatus">
+                        Checking...
+                    </small>
+
+                </div>
+
+
+                <div class="status-item">
+
+                    <span class="dot green">
+                    </span>
+
+                    <b>Flask</b>
+
+                    <small>Running</small>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+        <div class="panel alerts">
+
+            <h3>Active Alerts</h3>
+
+            <p id="alertMessage"
+               class="no-alert">
+                No abnormal values
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+<script src="{{ url_for('static',
+filename='dashboard.js') }}"></script>
+
+
+</body>
+
+</html>
